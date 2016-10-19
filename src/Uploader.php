@@ -1,9 +1,9 @@
 <?php
 
-namespace CristianVuo\Uploader;
+namespace CristianVuolo\Uploader;
 
 use CristianVuolo\Uploader\UploaderException;
-use Intervention\Image\Image;
+use Intervention\Image\ImageManager as Image;
 
 class Uploader
 {
@@ -22,11 +22,11 @@ class Uploader
     {
         if ($component) {
             $this->component = $component;
-            $this->dir = config('CvConfigs/cv_uploader.base_path') . '/' . config('CvConfigs/cv_uploader.paths.'.$component);
+            $this->dir = config('CvConfigs.cv_uploader.base_path') . '/' . config('CvConfigs.cv_uploader.paths.'.$component);
             $this->checkSizesSeted();
             if ($thumb) {
                 $this->genThumb = true;
-                $this->thumbDir = config('CvConfigs/cv_uploader.base_path_thumb') . '/' . config('CvConfigs/cv_uploader.paths.'.$component);
+                $this->thumbDir = config('CvConfigs.cv_uploader.base_path_thumb') . '/' . config('CvConfigs.cv_uploader.paths.'.$component);
             }
         }
     }
@@ -42,7 +42,7 @@ class Uploader
     }
 
     private function checkSizesSeted() {
-        $sizes = config('CvConfigs/cv_uploader.sizes.'.$this->component);
+        $sizes = config('CvConfigs.cv_uploader.sizes.'.$this->component);
         if(is_array($sizes)) {
             if(isset($sizes[0]) AND is_numeric($sizes[0])) {
                 if(isset($sizes[1]) AND is_numeric($sizes[1])){
@@ -136,6 +136,7 @@ class Uploader
 
     public function upload($file)
     {
+
         if ($file != null) {
 
             if ($this->fileName == null) {
@@ -157,7 +158,8 @@ class Uploader
             if (!$this->dir) {
                 throw new UploaderException('Upload directory is not defined');
             }
-            $img->save($this->dir . $fileName);
+            
+            $img->save($this->dir . '/' . $fileName);
             return $fileName;
         } else {
             return 0;
@@ -166,9 +168,9 @@ class Uploader
 
     public function checkDirectoryExists()
     {
-        if (!file_exists($this->dir)) {
-            mkdir($this->dir, 0755);
-            mkdir($this->thumbDir, 0755);
+        if (!file_exists($this->dir) OR !file_exists($this->thumbDir)) {
+            @mkdir($this->dir, 0755, true);
+            @mkdir($this->thumbDir, 0755, true);
         }
         return true;
     }
@@ -176,7 +178,8 @@ class Uploader
     public function uploadThumb($file, $fileName)
     {
         $img = new Image;
-        $this->resize($img->make($file), true);
-        $img->save($this->thumbDir . $fileName);
+        $img = $img->make($file);
+        $this->resize($img, true);
+        $img->save($this->thumbDir . '/' . $fileName);
     }
 }
