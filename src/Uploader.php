@@ -44,15 +44,19 @@ class Uploader
     private function checkSizesSeted() {
         $sizes = config('CvConfigs.cv_uploader.sizes.'.$this->component);
         if(is_array($sizes)) {
+
             if(isset($sizes[0]) AND is_numeric($sizes[0])) {
                 if(isset($sizes[1]) AND is_numeric($sizes[1])){
                     $this->setSize($sizes, $this->genThumb);
+                    return true;
                 } else {
                     $this->w = $sizes[0];
+                    return true;
                 }
             }
             if(isset($sizes[1]) AND is_numeric($sizes[1])) {
                 $this->w = $sizes[1];
+                return true;
             }
 
         }

@@ -4,12 +4,12 @@ return [
     'base_path_thumb' => 'uploads/thumbs',
     //Paths of components based on base_path.
     'paths' => [
-        // 'banner' => 'banners'
+        // 'banner' => 'banners',
     ],
 
     // size of component path
     // width x height
     'sizes' => [
-        // 'banner' => [100, 100]
+        // 'banner' => [100, 100],
     ],
 ];
