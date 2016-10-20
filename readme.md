@@ -15,7 +15,7 @@ Rodar a rotina de publicação no artisan
 > Instanciar a classe, declarar o nome do arquivo (opcional) e enviar o $file com o campo o input
 
     $img = new Uploader('component', true);
-    $img->setFilename('nome da imagem);
+    $img->setFilename('nome da imagem');
     $fileName = $img->upload($file);
 
 
