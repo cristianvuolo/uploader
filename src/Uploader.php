@@ -94,7 +94,7 @@ class Uploader
         //iniciando contador
         $c = 1;
         // Verificando se a imagem já existe no diretório iniciado com a classe
-        while (file_exists(public_path() . '/' . $this->dir . $newFileName . '.' . $ext) == true) {
+        while (file_exists(public_path() . '/' . $this->dir . '/' . $newFileName . '.' . $ext) == true) {
             // Adicinando número do contador ao nome da imagem original
             $newFileName = $originalFileName . '-' . $c;
             // Incrementando contador
