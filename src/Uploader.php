@@ -17,6 +17,8 @@ class Uploader
     private $thumbRate = 6;
     private $ratio = false;
     private $component = null;
+    private $resizeWithRatio = false;
+    private $maxRatios;
 
     public function __construct($component = false, $thumb = false)
     {
@@ -39,6 +41,12 @@ class Uploader
     public function setThumbRate($rate = 6)
     {
         $this->thumbRate = $rate;
+    }
+
+    public function setResizeWithRatio($resizeWithRatio = false, array $maxRatios)
+    {
+        $this->resizeWithRatio = $resizeWithRatio;
+        $this->maxRatios = $maxRatios;
     }
 
     private function checkSizesSeted() {
@@ -138,6 +146,29 @@ class Uploader
         }
     }
 
+    public function resizeWithRatio($img)
+    {
+        if($this->resizeWithRatio) {
+            $width = $img->width();
+            $height = $img->height();
+
+
+            if($width > $height) {
+                if($width > $this->maxRatios[0]) {
+                    $img->widen($this->maxRatios[0]);
+                }
+                return true;
+            }
+
+
+
+            if($height > $this->maxRatios[1]) {
+                $img->heighten($this->maxRatios[1]);
+            }
+        }
+        return true;
+    }
+
     public function upload($file)
     {
 
@@ -155,6 +186,7 @@ class Uploader
             $img = $img->make($file);
 
             $this->resize($img);
+            $this->resizeWithRatio($img);
 
             if ($this->genThumb) {
                 $this->uploadThumb($file, $fileName);
@@ -169,6 +201,8 @@ class Uploader
             return 0;
         }
     }
+
+
 
     public function checkDirectoryExists()
     {
