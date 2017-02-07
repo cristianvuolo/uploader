@@ -1,7 +1,7 @@
 <?php
 return [
-    'base_path' => 'uploads/components',
-    'base_path_thumb' => 'uploads/thumbs',
+    'base_path' => 'uploads/assets/components',
+    'base_path_thumb' => 'uploads/assets/thumbs',
     //Paths of components based on base_path.
     'paths' => [
         // 'banner' => 'banners',
