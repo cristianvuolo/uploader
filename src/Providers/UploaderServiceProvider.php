@@ -11,4 +11,9 @@ class UploaderServiceProvider extends ServiceProvider
         $this->publishes([__DIR__ . '/../configs/' => base_path('config')]);
         require_once __DIR__ . "/../Helpers/UploaderHelpers.php";
     }
+
+    public function register()
+    {
+        
+    }
 }
