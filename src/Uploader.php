@@ -19,18 +19,67 @@ class Uploader
     private $component = null;
     private $resizeWithRatio = false;
     private $maxRatios;
+    private $format = null;
+    private $replace = false;
 
     public function __construct($component = false, $thumb = false)
     {
         if ($component) {
             $this->component = $component;
-            $this->dir = config('CvConfigs.cv_uploader.base_path') . '/' . config('CvConfigs.cv_uploader.paths.'.$component);
+            $this->dir = config('CvConfigs.cv_uploader.base_path') . '/' . config('CvConfigs.cv_uploader.paths.' . $component);
             $this->checkSizesSeted();
             if ($thumb) {
                 $this->genThumb = true;
-                $this->thumbDir = config('CvConfigs.cv_uploader.base_path_thumb') . '/' . config('CvConfigs.cv_uploader.paths.'.$component);
+                $this->thumbDir = config('CvConfigs.cv_uploader.base_path_thumb') . '/' . config('CvConfigs.cv_uploader.paths.' . $component);
             }
         }
+    }
+
+    public function setDir($dir)
+    {
+        $this->dir = $dir;
+    }
+
+    public function setThumbDir($dir)
+    {
+        $this->thumbDir = $dir;
+    }
+
+    public function setRatio($ratio)
+    {
+        $this->ratio = $ratio;
+    }
+
+    public function setThumbRate($rate = 6)
+    {
+        $this->thumbRate = $rate;
+    }
+
+    public function getExtension($file)
+    {
+        if ($this->format == null) {
+            return $file->getClientOriginalExtension();
+        } else {
+            return $this->format;
+        }
+    }
+
+    public function setFormat($format)
+    {
+        if ($format != 'jpg' AND $format != 'png') {
+            throw new \Exception('Format invalid');
+        }
+        $this->format = $format;
+    }
+
+    public function setReplaceName($info = false)
+    {
+        $this->replace = $info;
+    }
+
+    public function setDir($dir)
+    {
+        $this->dir = $dir;
     }
 
     public function setRatio($ratio)
@@ -49,12 +98,13 @@ class Uploader
         $this->maxRatios = $maxRatios;
     }
 
-    private function checkSizesSeted() {
-        $sizes = config('CvConfigs.cv_uploader.sizes.'.$this->component);
-        if(is_array($sizes)) {
+    private function checkSizesSeted()
+    {
+        $sizes = config('CvConfigs.cv_uploader.sizes.' . $this->component);
+        if (is_array($sizes)) {
 
-            if(isset($sizes[0]) AND is_numeric($sizes[0])) {
-                if(isset($sizes[1]) AND is_numeric($sizes[1])){
+            if (isset($sizes[0]) AND is_numeric($sizes[0])) {
+                if (isset($sizes[1]) AND is_numeric($sizes[1])) {
                     $this->setSize($sizes, $this->genThumb);
                     return true;
                 } else {
@@ -62,7 +112,7 @@ class Uploader
                     return true;
                 }
             }
-            if(isset($sizes[1]) AND is_numeric($sizes[1])) {
+            if (isset($sizes[1]) AND is_numeric($sizes[1])) {
                 $this->w = $sizes[1];
                 return true;
             }
@@ -91,7 +141,7 @@ class Uploader
     }
 
 
-    private function name($fileName, $ext)
+    private function name($fileName, $ext, $replace = false)
     {
         // Removendo a extenção da Imagem
         $fileName = explode('.', $fileName);
@@ -101,12 +151,14 @@ class Uploader
         $newFileName = $originalFileName;
         //iniciando contador
         $c = 1;
-        // Verificando se a imagem já existe no diretório iniciado com a classe
-        while (file_exists(public_path() . '/' . $this->dir . '/' . $newFileName . '.' . $ext) == true) {
-            // Adicinando número do contador ao nome da imagem original
-            $newFileName = $originalFileName . '-' . $c;
-            // Incrementando contador
-            $c++;
+        if (!$replace) {
+            // Verificando se a imagem já existe no diretório iniciado com a classe
+            while (file_exists(public_path() . '/' . $this->dir . '/' . $newFileName . '.' . $ext) == true) {
+                // Adicinando número do contador ao nome da imagem original
+                $newFileName = $originalFileName . '-' . $c;
+                // Incrementando contador
+                $c++;
+            }
         }
         // Retornando o nome da Imagem com a extenção
         return $newFileName . '.' . $ext;
@@ -148,21 +200,20 @@ class Uploader
 
     public function resizeWithRatio($img)
     {
-        if($this->resizeWithRatio) {
+        
+        if ($this->resizeWithRatio) {
             $width = $img->width();
             $height = $img->height();
 
-
-            if($width > $height) {
-                if($width > $this->maxRatios[0]) {
+            if ($width > $height) {
+                if ($width > $this->maxRatios[0]) {
                     $img->widen($this->maxRatios[0]);
                 }
                 return true;
             }
 
 
-
-            if($height > $this->maxRatios[1]) {
+            if ($height > $this->maxRatios[1]) {
                 $img->heighten($this->maxRatios[1]);
             }
         }
@@ -175,9 +226,9 @@ class Uploader
         if ($file != null) {
 
             if ($this->fileName == null) {
-                $fileName = $this->name($file->getClientOriginalName(), $file->getClientOriginalExtension());
+                $fileName = $this->name($file->getClientOriginalName(), $this->getExtension($file), $this->replace);
             } else {
-                $fileName = $this->name($this->fileName, $file->getClientOriginalExtension());
+                $fileName = $this->name($this->fileName, $this->getExtension($file), $this->replace);
             }
 
             $this->checkDirectoryExists();
@@ -185,8 +236,17 @@ class Uploader
             $img = new Image;
             $img = $img->make($file);
 
-            $this->resize($img);
-            $this->resizeWithRatio($img);
+            if ($this->resizeWithRatio) {
+                $this->resizeWithRatio($img);
+            } else {
+                $this->resize($img);
+            }
+
+
+
+            if ($this->format != null) {
+                $img = $img->encode($this->format);
+            }
 
             if ($this->genThumb) {
                 $this->uploadThumb($file, $fileName);
@@ -194,14 +254,14 @@ class Uploader
             if (!$this->dir) {
                 throw new UploaderException('Upload directory is not defined');
             }
-            
+
+
             $img->save($this->dir . '/' . $fileName);
             return $fileName;
         } else {
             return 0;
         }
     }
-
 
 
     public function checkDirectoryExists()
