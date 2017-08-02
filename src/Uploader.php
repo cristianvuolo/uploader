@@ -35,25 +35,14 @@ class Uploader
         }
     }
 
-    public function setDir($dir)
-    {
-        $this->dir = $dir;
-    }
+
 
     public function setThumbDir($dir)
     {
         $this->thumbDir = $dir;
     }
 
-    public function setRatio($ratio)
-    {
-        $this->ratio = $ratio;
-    }
-
-    public function setThumbRate($rate = 6)
-    {
-        $this->thumbRate = $rate;
-    }
+    
 
     public function getExtension($file)
     {
