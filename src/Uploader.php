@@ -187,23 +187,29 @@ class Uploader
         }
     }
 
-    public function resizeWithRatio($img)
+    public function resizeWithRatio($img, $thumb=false)
     {
-        
-        if ($this->resizeWithRatio) {
+        if($this->resizeWithRatio) {
             $width = $img->width();
             $height = $img->height();
 
-            if ($width > $height) {
-                if ($width > $this->maxRatios[0]) {
-                    $img->widen($this->maxRatios[0]);
+            if ($thumb) {
+                $reducer = $this->thumbRate;
+            } else {
+                $reducer = 1;
+            }
+
+            if($width > $height) {
+                if($width > $this->maxRatios[0]) {
+                    $img->widen($this->maxRatios[0] / $reducer);
                 }
                 return true;
             }
 
 
-            if ($height > $this->maxRatios[1]) {
-                $img->heighten($this->maxRatios[1]);
+
+            if($height > $this->maxRatios[1]) {
+                $img->heighten($this->maxRatios[1] / $reducer);
             }
         }
         return true;
@@ -267,6 +273,7 @@ class Uploader
         $img = new Image;
         $img = $img->make($file);
         $this->resize($img, true);
+        $this->resizeWithRatio($img, true);
         $img->save($this->thumbDir . '/' . $fileName);
     }
 }
