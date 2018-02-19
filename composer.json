@@ -1,6 +1,7 @@
 {
   "name": "cristianvuolo/uploader",
   "license": "MIT",
+  "description": "Addon Uploader",
   "require": {
     "php": ">=5.6.4",
     "intervention/image": "^2.3",
