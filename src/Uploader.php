@@ -168,7 +168,7 @@ class Uploader
         if ($this->size) {
             if ($this->ratio) {
                 if ($this->h != null AND $this->w != null) {
-                    $img->resize($this->w / $reducer, $this->h / $reducer);
+                    $img->resize(intval($this->w / $reducer), intval($this->h / $reducer));
                 }
                 if ($this->h == null AND $this->w == null) {
                     throw new \Exception('Width and Heigth has bot been seted. can`t be ratio.');
@@ -182,7 +182,7 @@ class Uploader
                 }
 
             } else {
-                $img->resize($this->w / $reducer, $this->h / $reducer);
+                $img->resize(intval($this->w / $reducer), intval($this->h / $reducer));
             }
         }
     }
@@ -201,7 +201,7 @@ class Uploader
 
             if($width > $height) {
                 if($width > $this->maxRatios[0]) {
-                    $img->widen($this->maxRatios[0] / $reducer);
+                    $img->widen(intval($this->maxRatios[0] / $reducer));
                 }
                 return true;
             }
@@ -209,7 +209,7 @@ class Uploader
 
 
             if($height > $this->maxRatios[1]) {
-                $img->heighten($this->maxRatios[1] / $reducer);
+                $img->heighten(intval($this->maxRatios[1] / $reducer));
             }
         }
         return true;
