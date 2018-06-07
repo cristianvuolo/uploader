@@ -21,6 +21,7 @@ class Uploader
     private $maxRatios;
     private $format = null;
     private $replace = false;
+    private $resize = true;
 
     public function __construct($component = false, $thumb = false)
     {
@@ -42,7 +43,7 @@ class Uploader
         $this->thumbDir = $dir;
     }
 
-    
+
 
     public function getExtension($file)
     {
@@ -109,15 +110,19 @@ class Uploader
         }
     }
 
-    public function setSize(array $size, $thumb = false)
+    public function setSize($size, $thumb = false)
     {
-        $this->size = true;
-        if ($thumb) {
-            $this->w = $size[0] / $this->thumbRate;
-            $this->h = $size[1] / $this->thumbRate;
+        if(is_null($size) OR $size == false){
+            $this->resize = false;
         } else {
-            $this->w = $size[0];
-            $this->h = $size[1];
+            $this->size = true;
+            if ($thumb) {
+                $this->w = $size[0] / $this->thumbRate;
+                $this->h = $size[1] / $this->thumbRate;
+            } else {
+                $this->w = $size[0];
+                $this->h = $size[1];
+            }
         }
     }
 
@@ -231,10 +236,12 @@ class Uploader
             $img = new Image;
             $img = $img->make($file);
 
-            if ($this->resizeWithRatio) {
-                $this->resizeWithRatio($img);
-            } else {
-                $this->resize($img);
+            if($this->resize) {
+                if ($this->resizeWithRatio) {
+                    $this->resizeWithRatio($img);
+                } else {
+                    $this->resize($img);
+                }
             }
 
 
