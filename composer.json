@@ -3,9 +3,8 @@
   "license": "MIT",
   "description": "Addon Uploader",
   "require": {
-    "php": ">=5.6.4",
-    "intervention/image": "^2.3",
-    "laravel/framework": "5.*"
+    "php": ">=5.8",
+    "intervention/image": "^2.3"
   },
   "autoload": {
     "psr-4": {
