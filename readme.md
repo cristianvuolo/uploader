@@ -6,7 +6,7 @@ Rodar a rotina de publicação no artisan
 
     php artisan vendor:publish --provider=CristianVuolo\Uploader\Providers\UploaderServiceProvider
 
-###Usage
+### Usage
 
 > Fazer o chamado da classe
 
@@ -19,7 +19,7 @@ Rodar a rotina de publicação no artisan
     $fileName = $img->upload($file);
 
 
-###todo
+### todo
 
 - Testes
 - Adicionar opção para enviar imagens com apenas um dos tamanhos definidos
